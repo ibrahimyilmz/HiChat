@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "336664389196",
+    "project_id": "messaging-app-d7ec7",
+    "storage_bucket": "messaging-app-d7ec7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336664389196:android:e8da4041ee6e56dc3d36e9",
+        "android_client_info": {
+          "package_name": "com.yilmaz.messaging_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4vJ6TxFDc7GqBSeowg_CtBGAdLW54r04"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
