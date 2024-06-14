@@ -57,10 +57,6 @@ class MainActivity : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
         // End initialize Firebase Auth and Firestore
 
-        val phoneNumber = intent.getStringExtra("phoneNumber");
-        Log.d(TAG, "Phone number: $phoneNumber")
-        startPhoneNumberVerification(phoneNumber!!)
-
         // Initialize Xml variables
         smsCodeEditText = findViewById(R.id.smsCodeEditText)
         confirmSMSButton = findViewById(R.id.confirmSMSButton)
@@ -115,6 +111,11 @@ class MainActivity : AppCompatActivity() {
                 resendToken = token
             }
         }
+
+
+        val phoneNumber = intent.getStringExtra("phoneNumber");
+        Log.d(TAG, "Phone number: $phoneNumber")
+        startPhoneNumberVerification(phoneNumber!!)
     }
 
     // [START on_start_check_user]

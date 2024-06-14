@@ -7,17 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/smsCodeEditText"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="300dp"
-        android:hint="Write the SMS"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <Button
         android:id="@+id/confirmSMSButton"
         android:layout_width="wrap_content"
@@ -27,4 +16,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/smsCodeEditText" />
+
+    <EditText
+        android:id="@+id/smsCodeEditText"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="300dp"
+        android:ems="10"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:inputType="phone"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
