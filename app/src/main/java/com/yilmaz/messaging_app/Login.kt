@@ -3,9 +3,7 @@ package com.yilmaz.messaging_app
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -23,6 +21,7 @@ class Login : Fragment(R.layout.fragment_login){
 
         loginButton.setOnClickListener {
             val phoneNumber = phoneNumberEditText.text.toString()
+            // TODO: check if the phone number is valid, is in desired format.
             if (phoneNumber.isNotEmpty()) {
                 Toast.makeText(requireContext(), "Logging in with: $phoneNumber", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(requireContext(), MainActivity::class.java).putExtra("phoneNumber", phoneNumber))
