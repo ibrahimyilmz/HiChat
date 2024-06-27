@@ -20,6 +20,9 @@ import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.concurrent.TimeUnit
 import android.content.Intent
+import android.os.CountDownTimer
+import android.widget.Toast
+import android.widget.Toast.LENGTH_LONG
 
 class MainActivity : AppCompatActivity() {
     // Declare Auth and Firestore variables
@@ -38,6 +41,7 @@ class MainActivity : AppCompatActivity() {
     // Xml variables
     lateinit var smsCodeEditText: EditText
     lateinit var confirmSMSButton: Button
+    lateinit var resendSMSButton: Button
     // End Xml variables
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +68,10 @@ class MainActivity : AppCompatActivity() {
             val smsCode = smsCodeEditText.text.toString()
             verifyPhoneNumberWithCode(storedVerificationId, smsCode)
         }
+        resendSMSButton = findViewById(R.id.resendSMSButton)
+        resendSMSButton.setOnClickListener {
+            resendVerificationCode(auth.currentUser!!.phoneNumber!!, resendToken)
+        }
         // End initialize Xml variables
 
 
@@ -78,13 +86,14 @@ class MainActivity : AppCompatActivity() {
                 //     user action.
                 Log.d(TAG, "onVerificationCompleted:$credential")
                 signInWithPhoneAuthCredential(credential)
-
+                Toast.makeText(applicationContext,"onVerificationCompleted",LENGTH_LONG).show();
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
                 // This callback is invoked in an invalid request for verification is made,
                 // for instance if the the phone number format is not valid.
                 Log.w(TAG, "onVerificationFailed", e)
+                Toast.makeText(applicationContext,"onVerificationFailed",LENGTH_LONG).show();
 
                 if (e is FirebaseAuthInvalidCredentialsException) {
                     // Invalid request
@@ -128,6 +137,7 @@ class MainActivity : AppCompatActivity() {
     // [END on_start_check_user]
 
     private fun startPhoneNumberVerification(phoneNumber: String) {
+        Toast.makeText(applicationContext,"startPhoneNumberVerification",LENGTH_LONG).show();
         // [START start_phone_auth]
         val options = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(phoneNumber) // Phone number to verify
@@ -146,11 +156,34 @@ class MainActivity : AppCompatActivity() {
         // [END verify_with_code]
     }
 
+    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCredential:success")
+                    Toast.makeText(applicationContext,"Login Successful",LENGTH_LONG).show();
+
+                    val user = task.result?.user
+                    updateUI(user)
+                } else {
+                    // Sign in failed, display a message and update the UI
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
+                        // The verification code entered was invalid
+                        Toast.makeText(applicationContext,"SMS code is invalid",LENGTH_LONG).show();
+                    }
+                    // TODO: Update UI
+                }
+            }
+    }
+
     // [START resend_verification]
     private fun resendVerificationCode(
         phoneNumber: String,
         token: PhoneAuthProvider.ForceResendingToken?,
     ) {
+
         val optionsBuilder = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(phoneNumber) // Phone number to verify
             .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
@@ -161,27 +194,28 @@ class MainActivity : AppCompatActivity() {
             optionsBuilder.setForceResendingToken(token) // callback's ForceResendingToken
         }
         PhoneAuthProvider.verifyPhoneNumber(optionsBuilder.build())
+
+        Toast.makeText(applicationContext,"Re-Sending SMS code",LENGTH_LONG).show();
+
+        // Start the timer for the resend button
+        startResendButtonCooldown()
     }
     // [END resend_verification]
 
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithCredential:success")
-
-                    val user = task.result?.user
-                } else {
-                    // Sign in failed, display a message and update the UI
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
-                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                        // The verification code entered was invalid
-                    }
-                    // TODO: Update UI
-                }
+    private fun startResendButtonCooldown() {
+        resendSMSButton.isEnabled = false
+        object : CountDownTimer(60000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                resendSMSButton.text = "Resend SMS (${millisUntilFinished / 1000})"
             }
+
+            override fun onFinish() {
+                resendSMSButton.isEnabled = true
+                resendSMSButton.text = "Resend SMS"
+            }
+        }.start()
     }
+
 
     private fun updateUI(user: FirebaseUser? = auth.currentUser) {
     }
