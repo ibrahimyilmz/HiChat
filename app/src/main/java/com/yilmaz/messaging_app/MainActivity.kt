@@ -132,12 +132,11 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         // Check if user is signed in (non-null) and update UI accordingly.
         val currentUser = auth.currentUser
-        updateUI(currentUser)
     }
     // [END on_start_check_user]
 
     private fun startPhoneNumberVerification(phoneNumber: String) {
-        Toast.makeText(applicationContext,"startPhoneNumberVerification",LENGTH_LONG).show();
+        Toast.makeText(applicationContext,"startPhoneNumberVerification",LENGTH_LONG).show()
         // [START start_phone_auth]
         val options = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(phoneNumber) // Phone number to verify
@@ -165,7 +164,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(applicationContext,"Login Successful",LENGTH_LONG).show();
 
                     val user = task.result?.user
-                    updateUI(user)
+                    checkUserExists(user!!)
                 } else {
                     // Sign in failed, display a message and update the UI
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
@@ -202,21 +201,64 @@ class MainActivity : AppCompatActivity() {
     }
     // [END resend_verification]
 
+    /**
+     * Disables the resend SMS button for a 60-second cooldown period.
+     * Updates the button text to show the remaining cooldown time.
+     * Re-enables the button and resets the text after the cooldown period.
+     */
     private fun startResendButtonCooldown() {
+        // Disable the resend SMS button
         resendSMSButton.isEnabled = false
+
+        // Create a CountDownTimer to handle the cooldown period
         object : CountDownTimer(60000, 1000) {
+            // Called every second to update the countdown timer
             override fun onTick(millisUntilFinished: Long) {
+                // Update the button text to show the remaining time in seconds
                 resendSMSButton.text = "Resend SMS (${millisUntilFinished / 1000})"
             }
 
+            // Called when the countdown timer finishes
             override fun onFinish() {
+                // Re-enable the resend SMS button
                 resendSMSButton.isEnabled = true
+
+                // Reset the button text to its original state
                 resendSMSButton.text = "Resend SMS"
             }
-        }.start()
+        }.start() // Start the countdown timer
     }
 
+    /**
+     * Checks if a user exists in the Firestore database.
+     * If the user exists, navigates to HomeActivity.
+     * If the user does not exist, navigates to FillProfileActivity.
+     * Handles errors by logging and showing a toast message.
+     *
+     * @param user The FirebaseUser object representing the currently authenticated user.
+     */
+    private fun checkUserExists(user: FirebaseUser) {
+        val userDocRef = db.collection("users").document(user.uid)
 
-    private fun updateUI(user: FirebaseUser? = auth.currentUser) {
+        userDocRef.get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    // User exists, navigate to HomeActivity
+                    Toast.makeText(this, "User exists", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, HomeActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    // User does not exist, navigate to FillProfileActivity
+                    Toast.makeText(this, "User does not exist", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, Login::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error checking user existence", exception)
+                Toast.makeText(this, "Error checking user existence", Toast.LENGTH_SHORT).show()
+            }
     }
 }
