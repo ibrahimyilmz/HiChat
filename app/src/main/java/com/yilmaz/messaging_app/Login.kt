@@ -12,14 +12,14 @@ import android.widget.Toast
 class Login : Fragment(R.layout.fragment_login){
 
     private lateinit var phoneNumberEditText: EditText
-    private lateinit var loginButton: Button
+    private lateinit var enterButton: Button
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         phoneNumberEditText= view.findViewById(R.id.phoneNumber)
-        loginButton= view.findViewById(R.id.loginButton)
+        enterButton= view.findViewById(R.id.enterButton)
 
-        loginButton.setOnClickListener {
+        enterButton.setOnClickListener {
             val phoneNumber = phoneNumberEditText.text.toString()
             // TODO: check if the phone number is valid, is in desired format.
             if (phoneNumber.isNotEmpty()) {
