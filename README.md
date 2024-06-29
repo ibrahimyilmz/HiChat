@@ -1,1 +1,1 @@
-# Messaging-App
+# HiChat
