@@ -11,16 +11,16 @@ import com.yilmaz.messaging_app.databinding.FragmentRegisterBinding
 
 class Register : Fragment(R.layout.fragment_register) {
 
-    private lateinit var phoneNumberEditText: EditText
+    private lateinit var userNameEditText: EditText
     private lateinit var registerButton: Button
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        phoneNumberEditText= view.findViewById(R.id.phoneNumber)
+        userNameEditText= view.findViewById(R.id.userName)
         registerButton= view.findViewById(R.id.registerButton)
 
         registerButton.setOnClickListener {
-            val phoneNumber = phoneNumberEditText.text.toString()
+            val phoneNumber = userNameEditText.text.toString()
             if (phoneNumber.isNotEmpty()) {
                 Toast.makeText(requireContext(), "Registering in with: $phoneNumber", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(requireContext(), MainActivity::class.java).putExtra("phoneNumber", phoneNumber))

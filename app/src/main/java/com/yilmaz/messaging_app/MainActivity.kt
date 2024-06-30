@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var callbacks: PhoneAuthProvider.OnVerificationStateChangedCallbacks
 
     companion object {
-        private const val TAG = "LoginPage: PhoneAuthActivity"
+        const val TAG = "LoginPage: PhoneAuthActivity"
     }
     // End declaring Auth and Firestore variables
 
@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         // End initialize Firebase Auth and Firestore
 
         // Initialize Xml variables
-        smsCodeEditText = findViewById(R.id.smsCodeEditText)
+        smsCodeEditText = findViewById(R.id.verificationEditText)
         confirmSMSButton = findViewById(R.id.confirmSMSButton)
         confirmSMSButton.setOnClickListener {
             val smsCode = smsCodeEditText.text.toString()
