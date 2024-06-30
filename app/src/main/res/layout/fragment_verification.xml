@@ -9,14 +9,14 @@
         android:id="@+id/confirmSMSButton"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
-        android:layout_alignBottom="@+id/smsCodeEditText"
+        android:layout_alignBottom="@+id/verificationEditText"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
         android:layout_marginBottom="-65dp"
         android:text="Confirm" />
 
     <EditText
-        android:id="@+id/smsCodeEditText"
+        android:id="@+id/verificationEditText"
         android:layout_width="300dp"
         android:layout_height="60dp"
         android:layout_marginTop="300dp"
