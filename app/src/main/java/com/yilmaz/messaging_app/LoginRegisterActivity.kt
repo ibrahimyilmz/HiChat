@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import android.widget.Toast.LENGTH_LONG
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.firebase.FirebaseException
@@ -11,6 +12,7 @@ import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.yilmaz.messaging_app.databinding.ActivityLoginRegisterBinding
+import java.util.concurrent.TimeUnit
 
 class LoginRegisterActivity : AppCompatActivity() {
 
@@ -18,6 +20,10 @@ class LoginRegisterActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "LoginRegisterActivity"
     }
+
+    lateinit var loginFragment : Login
+    val verificationFragment = Verification()
+    lateinit var registerFragment : Register
 
     lateinit var binding: ActivityLoginRegisterBinding
     private lateinit var auth: FirebaseAuth
@@ -78,6 +84,18 @@ class LoginRegisterActivity : AppCompatActivity() {
 
         // Start with the initial fragment or activity logic
         replaceFragment(Login())
+    }
+    fun startPhoneNumberVerification(phoneNumber: String) {
+        Toast.makeText(applicationContext,"startPhoneNumberVerification", LENGTH_LONG).show()
+        // [START start_phone_auth]
+        val options = PhoneAuthOptions.newBuilder(auth)
+            .setPhoneNumber(phoneNumber) // Phone number to verify
+            .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+            .setActivity(this) // Activity (for callback binding)
+            .setCallbacks(callbacks) // OnVerificationStateChangedCallbacks
+            .build()
+        PhoneAuthProvider.verifyPhoneNumber(options)
+        // [END start_phone_auth]
     }
     override fun onStart() {
         super.onStart()

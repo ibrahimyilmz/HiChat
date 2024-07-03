@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity() {
     }
     // [END on_start_check_user]
 
-    private fun startPhoneNumberVerification(phoneNumber: String) {
+     fun startPhoneNumberVerification(phoneNumber: String) {
         Toast.makeText(applicationContext,"startPhoneNumberVerification",LENGTH_LONG).show()
         // [START start_phone_auth]
         val options = PhoneAuthOptions.newBuilder(auth)
@@ -245,7 +245,7 @@ class MainActivity : AppCompatActivity() {
                 if (document.exists()) {
                     // User exists, navigate to HomeActivity
                     Toast.makeText(this, "User exists", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(this, HomeActivity::class.java)
+                    val intent = Intent(this, MainActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {
