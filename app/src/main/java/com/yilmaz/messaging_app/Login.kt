@@ -31,6 +31,7 @@ class Login : Fragment(R.layout.fragment_login) {
         enterButton.setOnClickListener {
             val phoneNumber = phoneNumberEditText.text.toString()
             if (phoneNumber.isNotEmpty()) {
+
                 activityReference?.startPhoneNumberVerification(phoneNumber)
                 activityReference?.verificationFragment?.let { fragment ->
                     if (fragment is Fragment) {

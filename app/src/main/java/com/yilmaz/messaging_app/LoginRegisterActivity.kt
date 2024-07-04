@@ -2,6 +2,7 @@ package com.yilmaz.messaging_app
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.widget.Toast
 import android.widget.Toast.LENGTH_LONG
@@ -21,6 +22,7 @@ class LoginRegisterActivity : AppCompatActivity() {
         private const val TAG = "LoginRegisterActivity"
     }
 
+     private lateinit var phoneNumber: String
     lateinit var loginFragment : Login
     val verificationFragment = Verification()
     lateinit var registerFragment : Register
@@ -87,6 +89,7 @@ class LoginRegisterActivity : AppCompatActivity() {
     }
     fun startPhoneNumberVerification(phoneNumber: String) {
         Toast.makeText(applicationContext,"startPhoneNumberVerification", LENGTH_LONG).show()
+        this.phoneNumber = phoneNumber
         // [START start_phone_auth]
         val options = PhoneAuthOptions.newBuilder(auth)
             .setPhoneNumber(phoneNumber) // Phone number to verify
@@ -109,6 +112,9 @@ class LoginRegisterActivity : AppCompatActivity() {
     private fun verifyPhoneNumberWithCode(verificationId: String?, smsCode: String) {
         val credential = PhoneAuthProvider.getCredential(verificationId!!, smsCode)
         signInWithPhoneAuthCredential(credential)
+    }
+    fun confirmSmsCode(smsCode: String) {
+        verifyPhoneNumberWithCode(storedVerificationId, smsCode)
     }
     private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
         auth.signInWithCredential(credential)
@@ -133,12 +139,12 @@ class LoginRegisterActivity : AppCompatActivity() {
         userDocRef.get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
-                    // User exists, navigate to HomeActivity
+                    TODO("Navigate to HomeActivity")
                     Toast.makeText(this, "User exists", Toast.LENGTH_SHORT).show()
                     navigateToMainActivity()
                 } else {
-                    // User does not exist, navigate to FillProfileActivity
                     Toast.makeText(this, "User does not exist", Toast.LENGTH_SHORT).show()
+                    replaceFragment(verificationFragment)
                 }
             }
             .addOnFailureListener { exception ->
@@ -151,6 +157,30 @@ class LoginRegisterActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+    fun resendVerificationCode(
+        phoneNumber: String,
+        token: PhoneAuthProvider.ForceResendingToken?,
+    ) {
+
+        val optionsBuilder = PhoneAuthOptions.newBuilder(auth)
+            .setPhoneNumber(phoneNumber) // Phone number to verify
+            .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+            .setActivity(this) // (optional) Activity for callback binding
+            // If no activity is passed, reCAPTCHA verification can not be used.
+            .setCallbacks(callbacks) // OnVerificationStateChangedCallbacks
+        if (token != null) {
+            optionsBuilder.setForceResendingToken(token) // callback's ForceResendingToken
+        }
+        PhoneAuthProvider.verifyPhoneNumber(optionsBuilder.build())
+
+        Toast.makeText(applicationContext,"Re-Sending SMS code",LENGTH_LONG).show();
+
+    }
+    fun resendSmsCode() {
+        resendVerificationCode(phoneNumber, resendToken)
+    }
+
+
     fun replaceFragment(fragment: Fragment) {
         val fragmentManager = supportFragmentManager
         val transaction = fragmentManager.beginTransaction()
